@@ -4,9 +4,6 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.handler.codec.http.HttpClientCodec;
 import org.jboss.netty.handler.codec.http.HttpContentDecompressor;
-import org.jboss.netty.handler.ssl.SslHandler;
-
-import javax.net.ssl.SSLEngine;
 
 import static org.jboss.netty.channel.Channels.pipeline;
 
