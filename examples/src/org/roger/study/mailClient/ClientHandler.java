@@ -24,6 +24,7 @@ public class ClientHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
         super.messageReceived(ctx, e);    //To change body of overridden methods use File | Settings | File Templates.
+        System.out.println("Ok");
     }
 
     @Override
@@ -46,7 +47,7 @@ public class ClientHandler extends SimpleChannelUpstreamHandler {
         httpRequest.setHeader(HttpHeaders.Names.CONTENT_TYPE, "application/vnd.ms-sync.wbxml");
 
         String msg = BuildMsg();
-        httpRequest.setHeader(HttpHeaders.Names.CONTENT_LENGTH, msg.getBytes().length);
+        httpRequest.setHeader(HttpHeaders.Names.CONTENT_LENGTH, msg.getBytes("UTF-8").length);
 
         httpRequest.setContent(ChannelBuffers.copiedBuffer(msg, CharsetUtil.UTF_8));
 

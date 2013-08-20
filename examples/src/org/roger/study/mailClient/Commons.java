@@ -2,14 +2,14 @@ package org.roger.study.mailClient;
 
 import sun.misc.BASE64Encoder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
 
 import static java.net.URLEncoder.encode;
+import static org.roger.study.mailClient.configs.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,16 +22,16 @@ public class Commons {
     private static final float version = (float) 14.1;
     private static final String DeviceId = "351554059027376";
     private static final String DeviceType = "TouchDown";
-    private static final int policyKey = 1919813980;
-    private static long clientId = 51456017;
+    private static final int policyKey = 1544121970;
+    private static BigInteger clientId = new BigInteger(configs.getStartId());
     private static int count = 0;
 
     public static String getHost()  {
-        return configs.getKeyValue("serverHost");
+        return getKeyValue("serverHost");
     }
 
     public static int getPort()  {
-        return Integer.parseInt(configs.getKeyValue("serverPort"));
+        return Integer.parseInt(getKeyValue("serverPort"));
     }
 
     public static synchronized void setCount() {
@@ -112,10 +112,12 @@ public class Commons {
     private static String getPolicyKey() {
         String res = "";
 
-        res += (char)((policyKey >> 24) & 0xff);
-        res += (char)((policyKey >> 16) & 0xff);
-        res += (char)((policyKey >> 8) & 0xff);
-        res += (char)(policyKey  & 0xff);
+        //System.out.println(policyKey);
+        for (int i=0;i < 4;i ++)  {
+            int ch = (policyKey >> (8 * i)) & 0xff;
+            res += (char)ch;
+        }
+        //System.out.println(res);
 
         return res;
     }
@@ -150,6 +152,7 @@ public class Commons {
         res += (char) 0x3;
 
         res += encode(getClientId(), "utf-8");
+
         res += (char) 0x0;
 
         //CollectionId end
@@ -163,7 +166,10 @@ public class Commons {
 
         //MIME Content
         byte[] bytes = hexStringToBytes("c38509546f3a207765694073657261642e636f6d0d0a46726f6d3a20726f6765724073657261642e636f6d0d0a446174653a205765642c2031342041756720323031332031313a33373a3335202b303830300d0a582d4d61696c65723a20546f756368446f776e0d0a4d494d452d56657273696f6e3a20312e300d0a5375626a6563743a203d3f7574662d383f423f4d54497a3f3d0d0a436f6e74656e742d547970653a206d756c7469706172742f6d697865643b626f756e646172793d225f5f31333736343531343535393830544f554348444f574e5f424f554e444152595f5f220d0a0d0a0d0a2d2d5f5f31333736343531343535393830544f554348444f574e5f424f554e444152595f5f0d0a436f6e74656e742d547970653a20746578742f68746d6c3b20636861727365743d227574662d38220d0a436f6e74656e742d5472616e736665722d456e636f64696e673a2071756f7465642d7072696e7461626c650d0a0d0a3c68746d6c3e3c626f6479207374796c653d334427666f6e742d66616d696c793a43616c696272692c20417269616c2c2048656c7665746963612c2073616e732d73657269663b666f6e742d3d0d0a73697a653a313170743b636f6c6f723a626c61636b27203e3132333c62723e3c62723e262332323331323b262332353130353b262333303334303b20416e64726f696420262332353136333b3d0d0a262332363432363b262331393937383b262332393939323b20546f756368446f776e20262332313435373b262333363836353b20287777772e6e6974726f6465736b2e636f6d293c2f626f643d0d0a793e3c2f68746d6c3e0d0a0d0a2d2d5f5f31333736343531343535393830544f554348444f574e5f424f554e444152595f5f2d2d0d0a");
-        res += new String(bytes,"UTF-8");
+        String tmp = new String(bytes,"utf-8");
+        System.out.println(tmp.getBytes().length);
+
+        res += tmp;
 
         //MIME end
         res += (char) 0x1;
@@ -174,9 +180,22 @@ public class Commons {
     }
 
     private static synchronized String getClientId() {
-        return String.valueOf(clientId++);
+        clientId = clientId.add(new BigInteger("1"));
+        return String.valueOf(clientId);
     }
 
+    private static String bytesToString(byte[] bytes) {
+        StringBuffer buffer = new StringBuffer();
+        char[] tmp = new char[bytes.length];
+
+        for(int i = 0;i < bytes.length;i ++) {
+            tmp[i] = (char)bytes[i];
+        }
+
+        buffer.append(tmp);
+
+        return buffer.toString();
+    }
     private static byte[] hexStringToBytes(String hexString) {
         if (hexString == null || hexString.equals("")) {
             return null;
@@ -193,6 +212,7 @@ public class Commons {
             //两个字符一个对应byte的高四位一个对应第四位
             d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
         }
+
 
         return d;
     }

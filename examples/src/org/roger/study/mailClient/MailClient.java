@@ -35,14 +35,8 @@ public class MailClient {
     }
 
     public static void main(String[] args) throws IOException {
-        configs();
+        configs.init();
         MailClient client = new MailClient();
         client.run();
-
-        System.out.println();
-    }
-
-    private static void configs() {
-
     }
 }
