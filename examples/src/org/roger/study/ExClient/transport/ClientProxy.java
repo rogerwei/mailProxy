@@ -27,8 +27,7 @@ public class ClientProxy {
     public void start()  {
         ClientBootstrap bootstrap = new ClientBootstrap(factory);
         bootstrap.setPipelineFactory(new PipelineFactory());
-        System.out.println(Configs.getHost());
-        System.out.println(Configs.getPort());
         bootstrap.connect(new InetSocketAddress(Configs.getHost(), Configs.getPort()));
+
     }
 }
