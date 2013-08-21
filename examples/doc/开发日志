@@ -1,0 +1,21 @@
+2013年8月20日 11：44
+什么会导致邮件发送失败：1. Authorization字段；2. PolicyKey；3. ClientID。
+PolicyKey错误码：114
+ClientID无效码：118   邮件已经发送过了。
+InvalidXML：103
+InvalidWBXML：102
+
+
+2013年8月15日  17:31
+    mailProxy,名字有一定歧义。它本质上一个客户端程序程序。主要功能是伪造邮件，并发送出去。存在的意义是：并发，用于测试邮件代理产品的稳定性。
+
+    以后为了不引起歧义，改成为邮件代理测试客户端(TestClient)。
+    TestClient已经完成的工作：
+    1. 伪造URI、Header、WAP Binary XML。
+    2. 可以灵活地改变用户、URI。
+    3. 单一用户批量发送邮件。
+    不足：
+    不支持协商Policy Key。
+    不支持邮件内容组织。
+    不能进行多用支持。
+    不支持配置、部署。
