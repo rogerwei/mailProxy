@@ -1,13 +1,17 @@
 package org.roger.study.ExClient.Protocol;
 
 import org.roger.study.ExClient.configuration.Configs;
-import org.roger.study.codecs.Base64;
+import org.roger.study.ExClient.configuration.RunTime;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-import static org.roger.study.ExClient.commons.Base64.Encode;
+import static org.roger.study.ExClient.Util.Base64.Encode;
+import static org.roger.study.ExClient.Util.SwitchData.LongTo4BytesInt;
+import static org.roger.study.ExClient.configuration.RunTime.getDeviceId;
+import static org.roger.study.ExClient.configuration.RunTime.getDeviceType;
+import static org.roger.study.ExClient.configuration.RunTime.getPolicyKey;
 
 /**
  * Created with IntelliJ IDEA.
@@ -57,7 +61,7 @@ public class BuildURI {
         outputStream.write(0x4);
 
         //input device Id length
-        String DeviceId = Configs.getDeviceId(user);
+        String DeviceId = getDeviceId(user);
         outputStream.write(DeviceId.length() & 0xff);
 
         //input device Id
@@ -72,16 +76,15 @@ public class BuildURI {
             outputStream.write(0x0);
         else  {
             outputStream.write(0x4);
-
             try {
-                outputStream.write(Configs.getPolicyKey(user));
+                outputStream.write(LongTo4BytesInt(getPolicyKey(user)));
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
 
 
-        String DeviceType = Configs.getDeviceType();
+        String DeviceType = getDeviceType();
         //input Device type length
         outputStream.write(DeviceType.length() & 0xff);
 
@@ -94,9 +97,11 @@ public class BuildURI {
 
         //Parameters
         //Options Used by SmartReply, SmartForward, SendMail, ItemOperations
-        //outputStream.write(0x7);     //Tags
-        //outputStream.write(0x1);    //len
-        //outputStream.write(0x1);    //value  0x1:SaveInSent  0x2:AcceptMultiPart
+        if (command.equals("SendMail"))  {
+            outputStream.write(0x7);     //Tags
+            outputStream.write(0x1);    //len
+            outputStream.write(0x1);    //value  0x1:SaveInSent  0x2:AcceptMultiPart
+        }
         return Encode(outputStream.toByteArray());  //To change body of created methods use File | Settings | File Templates.
     }
 

@@ -1,5 +1,6 @@
 package org.roger.study.ExClient;
 
+import org.roger.study.ExClient.configuration.Configs;
 import org.roger.study.ExClient.transport.ClientProxy;
 
 /**
@@ -13,9 +14,9 @@ public class ExClient {
 
     public static void main(String[] args)  {
         //init config
-
+        Configs.init();
         //start console
-        ClientProxy proxy = new ClientProxy();
+        ClientProxy proxy = new ClientProxy(Configs.getUsers().size());
         proxy.start();
     }
 }

@@ -1,4 +1,4 @@
-package org.roger.study.ExClient.commons;
+package org.roger.study.ExClient.Util;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;

@@ -3,11 +3,13 @@ package org.roger.study.ExClient.Protocol;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.handler.codec.http.*;
 import org.jboss.netty.util.CharsetUtil;
-import org.roger.study.ExClient.commons.Base64;
+import org.roger.study.ExClient.Util.Base64;
 import org.roger.study.ExClient.configuration.Configs;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+
+import static org.roger.study.ExClient.configuration.RunTime.getDeviceId;
 
 /**
  * Created with IntelliJ IDEA.
@@ -111,7 +113,7 @@ public class ProxyRequest {
         //IMEI
         message += (char) 0x58;
         message += (char) 0x3;
-        message += Configs.getDeviceId(user);
+        message += getDeviceId(user);
         message += (char) 0x0;
         message += (char) 0x1;
 

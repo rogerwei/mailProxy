@@ -7,6 +7,9 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.util.CharsetUtil;
 import org.roger.study.ExClient.Protocol.ProxyRequest;
 import org.roger.study.ExClient.configuration.Configs;
+import org.roger.study.ExClient.controller.HandleResponse;
+
+import static org.roger.study.ExClient.controller.HandleChannel.BuildPeer;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,29 +24,17 @@ public class ClientHandler extends SimpleChannelUpstreamHandler {
         System.out.println("connected-->[" + Configs.getHost() + ":" + Configs.getPort() +"]");
 
         Channel channel = e.getChannel();
-        HttpRequest optionReq = ProxyRequest.getOptionRequest();
-        channel.write(optionReq);
+        BuildPeer(channel);
         System.out.println(channel.getId());
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
-        System.out.println("Handler receivce!");
-        /*if (e.getMessage() instanceof HttpResponse)  {
-            HttpResponse response = (HttpResponse)  e.getMessage();
-            String message = response.getContent().toString(CharsetUtil.UTF_8);
-            System.out.println("MS-Server-ActiveSync:" + response.getHeader("MS-Server-ActiveSync"));
-            System.out.println("MS-ASProtocolVersions:" + response.getHeader("MS-ASProtocolVersions"));
-            System.out.println("MS-ASProtocolCommands:" + response.getHeader("MS-ASProtocolCommands"));
-            System.out.println("Allow:" + response.getHeader("Allow"));
-            System.out.println(HttpHeaders.Names.CONTENT_LENGTH + ":" + response.getHeader(HttpHeaders.Names.CONTENT_LENGTH));
-
-            System.out.println(message);
-        }*/
-
-        Channel channel = e.getChannel();
-        System.out.println(channel.getId());
-        channel.write(ProxyRequest.getProvisionRequest());
+        if (e.getMessage() instanceof HttpResponse)  {
+            HttpResponse response = (HttpResponse) e.getMessage();
+            Channel channel = e.getChannel();
+            HandleResponse.handle(response, channel);
+        }
     }
 
     @Override
