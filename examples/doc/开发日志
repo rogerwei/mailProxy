@@ -4,6 +4,8 @@ PolicyKey错误码：114
 ClientID无效码：118   邮件已经发送过了。
 InvalidXML：103
 InvalidWBXML：102
+DeviceNotProvisioned:142
+InvalidPolicyKey:144
 
 
 2013年8月15日  17:31

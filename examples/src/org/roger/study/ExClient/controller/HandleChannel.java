@@ -84,4 +84,8 @@ public class HandleChannel {
 
         return (user + ":" + pd);
     }
+
+    public static ChannelGroup activeChannels()  {
+        return channels;
+    }
 }

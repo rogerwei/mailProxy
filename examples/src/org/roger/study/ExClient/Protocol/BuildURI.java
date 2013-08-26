@@ -46,7 +46,23 @@ public class BuildURI {
         commands.put("ValidateCert", 22);
     }
 
-    public static String getURI(String command, String user) {
+
+    public static String getURI(BuildRequest.Type type, String user) {
+        String command;
+
+        switch (type) {
+            case Provision:
+            case AckProvision:
+                command = "Provision";
+                break;
+            case SendMail:
+                command = "SendMail";
+                break;
+            case Options:
+            default:
+                return "";
+        }
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.reset();
 
@@ -72,8 +88,9 @@ public class BuildURI {
         }
 
         //input Policy Key length
-        if (command.equals("Provision"))
+        if (type.equals(BuildRequest.Type.Provision))    {
             outputStream.write(0x0);
+        }
         else  {
             outputStream.write(0x4);
             try {
@@ -97,12 +114,12 @@ public class BuildURI {
 
         //Parameters
         //Options Used by SmartReply, SmartForward, SendMail, ItemOperations
-        if (command.equals("SendMail"))  {
+        if (type.equals(BuildRequest.Type.SendMail))  {
             outputStream.write(0x7);     //Tags
             outputStream.write(0x1);    //len
             outputStream.write(0x1);    //value  0x1:SaveInSent  0x2:AcceptMultiPart
         }
-        return Encode(outputStream.toByteArray());  //To change body of created methods use File | Settings | File Templates.
+        return "?" +Encode(outputStream.toByteArray());  //To change body of created methods use File | Settings | File Templates.
     }
 
 

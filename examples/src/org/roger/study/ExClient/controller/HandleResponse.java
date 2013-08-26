@@ -20,6 +20,9 @@ public class HandleResponse {
             case Provision:
                 SendRequest.Provision(channel);
                 break;
+            case AckProvision:
+                SendRequest.AckProvision(channel);
+                break;
             case SendMail:
                 SendRequest.SendMail(channel);
                 break;

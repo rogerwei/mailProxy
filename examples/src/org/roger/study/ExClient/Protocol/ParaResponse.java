@@ -8,6 +8,7 @@ import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
+import static org.roger.study.ExClient.Protocol.WBXmlCommands.getStatus;
 import static org.roger.study.ExClient.Protocol.WBXmlCommands.getValue;
 import static org.roger.study.ExClient.configuration.Configs.getRunTimes;
 import static org.roger.study.ExClient.configuration.RunTime.setPolicyKey;
@@ -51,22 +52,28 @@ public class ParaResponse {
     private BuildRequest.Type getDataAndNext(ByteBuffer byteBuffer) {
         byte[] bytes = byteBuffer.array();
 
-        byte page = bytes[5];
-        if (page == 0xe)  {//Provision
-            paraPolicyKey(bytes);
-
-            if (getRunTimes() > 0)
+        ParaCmd para = new ParaCmd(bytes);
+        if (para.isProvision())  {
+            if (para.Status(ParaCmd.StatusType.DeviceInformation) == 1)  {
+                paraPolicyKey(para);
+                return BuildRequest.Type.AckProvision;
+            }else if (para.Status(ParaCmd.StatusType.Policy) == 1)  {
+                paraPolicyKey(para);
                 return BuildRequest.Type.SendMail;
+            }
         }
+
         return BuildRequest.Type.None;  //To change body of created methods use File | Settings | File Templates.
     }
 
-    private void paraPolicyKey(byte[] bytes) {
+
+    private void paraPolicyKey(ParaCmd para) {
         String user = getUser(channel);
         if (user.isEmpty())
             return;
-        String key = getValue(bytes, 0x49);
-        if (!key.isEmpty())
+
+        Long key = para.policyKey();
+        if (key > 0)
             setPolicyKey(user, Long.valueOf((key)));
     }
 }

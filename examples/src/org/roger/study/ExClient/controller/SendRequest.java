@@ -1,8 +1,11 @@
 package org.roger.study.ExClient.controller;
 
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.roger.study.ExClient.Protocol.BuildRequest;
+
+import static org.roger.study.ExClient.controller.HandleChannel.activeChannels;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,12 +24,27 @@ public class SendRequest {
     }
 
     public static void SendMail(Channel channel) {
-        if (TestCounter.testOne(channel.getId()))
-            buildAndSend(channel, BuildRequest.Type.SendMail);
+        while ( true) {
+            if (TestCounter.testOne(channel.getId()))
+                buildAndSend(channel, BuildRequest.Type.SendMail);
+            else
+                break;
+        }
+    }
+
+    public static void SendMail()  {
+        for (Channel ch: activeChannels())  {
+            SendMail(ch);
+        }
     }
 
     private static void buildAndSend(Channel channel, BuildRequest.Type type) {
         HttpRequest request = new BuildRequest(channel, type).build();
-        channel.write(request);
+        if (request != null)
+            channel.write(request);
+    }
+
+    public static void AckProvision(Channel channel) {
+        buildAndSend(channel, BuildRequest.Type.AckProvision);
     }
 }

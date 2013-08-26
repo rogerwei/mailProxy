@@ -141,6 +141,10 @@ public class Configs {
         return runTimes;
     }
 
+    public static void setRumTimes(int times) {
+        runTimes = times;
+    }
+
     public static String getStartId() {
         return clientId;
     }

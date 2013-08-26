@@ -50,4 +50,11 @@ public class WBXmlCommands {
         }
         return "";
     }
+
+    public static int getStatus(byte[] bytes, int cmd)  {
+        int res = -1;
+
+
+        return res;
+    }
 }

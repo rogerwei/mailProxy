@@ -157,7 +157,7 @@ public class ProxyRequest {
         if (type.equals(RequestType.OptionRequest))
             request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.OPTIONS, "/Microsoft-Server-ActiveSync" );
         else if (type.equals(RequestType.ProvisionRequest))
-            request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/Microsoft-Server-ActiveSync?" +BuildURI.getURI("Provision", "mail01"));
+            request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/Microsoft-Server-ActiveSync?" +BuildURI.getURI(BuildRequest.Type.Provision, "mail01"));
 
         request.setHeader(HttpHeaders.Names.HOST, Configs.getHost());
         request.setHeader(HttpHeaders.Names.USER_AGENT, "ExClient(0.1)");

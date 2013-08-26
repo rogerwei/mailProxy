@@ -21,7 +21,7 @@ import static org.roger.study.ExClient.controller.HandleChannel.getUser;
  * To change this template use File | Settings | File Templates.
  */
 public class BuildRequest {
-    public enum Type {None, Options, Provision, SendMail};
+    public enum Type {None, Options, Provision, AckProvision, SendMail};
 
     private Type type;
     private Channel channel;
@@ -31,6 +31,9 @@ public class BuildRequest {
     }
 
     public HttpRequest build() {
+        if (type == Type.None)
+            return null;
+
         String message = new BuildMessage(type, getUser(channel)).build();
 
         int length = 0;
@@ -40,22 +43,21 @@ public class BuildRequest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        HttpRequest  request = null;
-        if (type.equals(Type.Options))
-            request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.OPTIONS, "/Microsoft-Server-ActiveSync" );
-        else if (type.equals(Type.Provision))
-            request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/Microsoft-Server-ActiveSync?" +BuildURI.getURI("Provision", getUser(channel)));
-        else if (type.equals(Type.SendMail))
-            request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "/Microsoft-Server-ActiveSync?" +BuildURI.getURI("SendMail", getUser(channel)));
+        HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1,
+                type.equals(Type.Options)? HttpMethod.OPTIONS: HttpMethod.POST,
+                "/Microsoft-Server-ActiveSync"+  BuildURI.getURI(type, getUser(channel)));
 
-        request.setHeader(HttpHeaders.Names.HOST, Configs.getHost());
-        request.setHeader(HttpHeaders.Names.USER_AGENT, "ExClient(0.1)");
-        request.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-        request.setHeader(HttpHeaders.Names.AUTHORIZATION, MessageFormat.format("Basic {0}", getEncodeAuth(channel)));
-        request.setHeader(HttpHeaders.Names.CONTENT_LENGTH, length);
-        if (length > 0) {
-            request.setHeader(HttpHeaders.Names.CONTENT_TYPE, "application/vnd.ms-sync.wbxml");
-            request.setContent(ChannelBuffers.copiedBuffer(message, CharsetUtil.UTF_8));
+        if (request != null)  {
+
+            request.setHeader(HttpHeaders.Names.HOST, Configs.getHost());
+            request.setHeader(HttpHeaders.Names.USER_AGENT, "ExClient(0.1)");
+            request.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+            request.setHeader(HttpHeaders.Names.AUTHORIZATION, MessageFormat.format("Basic {0}", getEncodeAuth(channel)));
+            request.setHeader(HttpHeaders.Names.CONTENT_LENGTH, length);
+            if (length > 0) {
+                request.setHeader(HttpHeaders.Names.CONTENT_TYPE, "application/vnd.ms-sync.wbxml");
+                request.setContent(ChannelBuffers.copiedBuffer(message, CharsetUtil.UTF_8));
+            }
         }
 
         return request;

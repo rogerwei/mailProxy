@@ -39,12 +39,62 @@ public class BuildMessage {
         switch (type) {
             case Provision:
                 return buildProvisionBody();
+            case AckProvision:
+                return buildAckProvisionBody();
             case SendMail:
                 return buildSendMailBody();
             default:
                 System.err.println("目前不支持WBXML类型.");
                 return "";
         }
+    }
+
+    private String buildAckProvisionBody() {
+        String wbxml ="";
+        //Switch Page
+        wbxml += (char) 0x0;
+        wbxml += (char)0xe;
+
+        //Provision
+        wbxml += (char) 0x45;
+
+        //Policies
+        wbxml += (char) 0x46;
+
+        //Policy
+        wbxml += (char) 0x47;
+
+        //Policy Type
+        wbxml += (char) 0x48;
+        wbxml += (char) 0x3;
+        wbxml += policyType;
+        wbxml += (char) 0x0;
+        wbxml += (char) 0x1;
+
+        //Policy Key
+        wbxml += (char) 0x49;
+        wbxml += (char) 0x3;
+        wbxml += String.valueOf(getPolicyKey(user));
+        wbxml += (char) 0x0;
+        wbxml += (char) 0x1;
+
+        //Status
+        wbxml += (char) 0x4b;
+        wbxml += (char) 0x3;
+        wbxml += "1";
+        wbxml += (char) 0x0;
+        wbxml += (char) 0x1;
+
+        //end Policy
+        wbxml += (char) 0x1;
+
+        //end Policies
+        wbxml += (char) 0x1;
+
+        //end Provision
+        wbxml += (char) 0x1;
+
+        return wbxml;
     }
 
     private String buildSendMailBody() {
@@ -83,7 +133,6 @@ public class BuildMessage {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        System.out.println(tmp.getBytes().length);
 
         wbxml += tmp;
 

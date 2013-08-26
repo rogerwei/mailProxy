@@ -12,20 +12,35 @@ import org.roger.study.ExClient.configuration.Configs;
  */
 public class TestCounter {
     private static ConcurrentHashMap<Integer, Integer> counter = new ConcurrentHashMap<Integer, Integer>();  //Channel Id, test times
+    private static Integer sent = 0x0;
 
-    public static boolean testOne(Integer key)  {
+    public static synchronized boolean  testOne(Integer key)  {
         if (!counter.containsKey(key))  {
             counter.put(key, 1);
+            sent ++;
             return true;
         }
 
         Integer value = counter.get(key);
         if (value < Configs.getRunTimes())  {
             counter.replace(key, value+1);
-
+            sent ++;
             return true;
         }
 
         return false;
+    }
+
+    public static boolean TestOver()  {
+        for (Integer value:counter.values())  {
+            if (value < Configs.getRunTimes())
+                return false;
+        }
+
+        return true;
+    }
+
+    public static void clearTestCounter()  {
+        counter.clear();
     }
 }
