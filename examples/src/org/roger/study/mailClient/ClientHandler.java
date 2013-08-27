@@ -19,12 +19,13 @@ import static org.roger.study.mailClient.Commons.setCount;
  */
 public class ClientHandler extends SimpleChannelUpstreamHandler {
 
-    private String username="roger";
+    private String username="mail01";
     private String password="Pp123456";
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
         super.messageReceived(ctx, e);    //To change body of overridden methods use File | Settings | File Templates.
         System.out.println("Ok");
+        e.getChannel().close();
     }
 
     @Override

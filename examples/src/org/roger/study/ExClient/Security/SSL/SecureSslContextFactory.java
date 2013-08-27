@@ -75,7 +75,8 @@ public  class SecureSslContextFactory {
             tmf.init(ca);
 
             clientContext = SSLContext.getInstance(PROTOCOL);
-            clientContext.init(kmf.getKeyManagers() ,SecureTrustManagerFactory.getTrustManagers(), /*tmf.getTrustManagers(),*/ null);
+            clientContext.init(kmf.getKeyManagers() ,/*SecureTrustManagerFactory.getTrustManagers(),*/ tmf.getTrustManagers(), null);
+            //clientContext.init(kmf.getKeyManagers() ,SecureTrustManagerFactory.getTrustManagers(), /*tmf.getTrustManagers(),*/ null);
 
         } catch (Exception e) {
             throw new Error( "Failed to initialize the server-side SSLContext", e);

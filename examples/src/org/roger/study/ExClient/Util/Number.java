@@ -14,4 +14,9 @@ public class Number {
         Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(str).matches();
     }
+
+    public static boolean isNumericOrLetter(String cmd) {
+        Pattern pattern = Pattern.compile("[0-9a-zA-Z]*");
+        return pattern.matcher(cmd).matches();
+    }
 }

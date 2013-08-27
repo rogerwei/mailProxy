@@ -48,6 +48,7 @@ public class ClientProxy {
         for(ClientBootstrap bootstrap : clients){
             bootstrap.connect(new InetSocketAddress(Configs.getHost(), Configs.getPort()));
         }
+        running = true;
     }
 
     public void stop() {
@@ -56,14 +57,11 @@ public class ClientProxy {
             return;
         }
 
-        ClientBootstrap bootstrap;
-        Iterator iterator = clients.iterator();
-
-        while (iterator.hasNext()) {
-            bootstrap = (ClientBootstrap) iterator;
+        for(ClientBootstrap bootstrap : clients){
             bootstrap.releaseExternalResources();
         }
 
         factory.releaseExternalResources();
+        running = false;
     }
 }

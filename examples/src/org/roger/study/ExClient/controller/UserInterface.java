@@ -11,6 +11,7 @@ import static org.roger.study.ExClient.controller.TestCounter.*;
  * To change this template use File | Settings | File Templates.
  */
 public class UserInterface {
+    private static Booter booter;
     public static void sendMail(int times)  {
         if (TestOver())  {
             clearTestCounter();
@@ -19,5 +20,42 @@ public class UserInterface {
         }else  {
             System.out.println("Your Test is Running.Pls do this test latter.");
         }
+    }
+
+    public static void stop()  {
+        if (TestOver())  {
+            if (booter == null)  {
+                System.out.println("Booter is null.Can't controll it.");
+            }else
+                booter.stop();
+        }else  {
+            System.out.println("Your Test is Running.Pls quit latter.");
+        }
+    }
+
+    public static void start()  {
+        if (TestOver())  {
+            if (booter == null)  {
+                System.out.println("Booter is null.Can't controll it.");
+            }else
+                booter.start();
+        }else  {
+            System.out.println("Your Test is Running.Pls quit latter.");
+        }
+    }
+
+    public static void restart()  {
+        if (TestOver())  {
+            if (booter == null)  {
+                System.out.println("Booter is null.Can't controll it.");
+            }else
+                booter.restart();
+        }else  {
+            System.out.println("Your Test is Running.Pls quit latter.");
+        }
+    }
+
+    public static void setBooter(Booter booter) {
+        UserInterface.booter = booter;
     }
 }
