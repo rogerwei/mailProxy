@@ -22,15 +22,25 @@ public class Configs {
     private static Properties running = new Properties();
     //keys
     private static String Type = "type";
-    private static String UserPeers = "userpeers";
-    private static String Host = "serverhost";
-    private static String Port = "serverport";
-    private static String Times = "runtimes";
+    private static String UserPeers = "user_peers";
+    private static String Host = "server_host";
+    private static String Port = "server_port";
+    private static String Times = "run_times";
+    private static String Ssl = "ssl";
+    private static String Pfx = "pfx";
+    private static String PfxPassword = "pfx_password";
+    private static String Ca = "ca";
+    private static String CaPassword = "ca_password";
     static final String  ClientId = "clientId";
     //values
     private static String host;
     private static int port;
     private static int runTimes =0;
+    private static boolean ssl;
+    private static String pfx;
+    private static String pfxPassword;
+    private static String ca;
+    private static String caPassword;
     private static String clientId;
 
 
@@ -47,6 +57,7 @@ public class Configs {
     }
 
     private static void initValues() {
+        //[1]
         String peersValue = properties.getProperty(UserPeers);
 
         String[]  peers = peersValue.split(";");
@@ -73,6 +84,35 @@ public class Configs {
         }
         runTimes = Integer.parseInt(tmp);
 
+        //ssl
+        tmp = properties.getProperty(Ssl);
+        if (!tmp.isEmpty())  {
+            setSsl(Boolean.valueOf(tmp));
+        }
+
+        if (Configs.ssl)  {
+            tmp = properties.getProperty(Pfx);
+            if (!tmp.isEmpty())  {
+                setPfx(tmp);
+            }
+
+            tmp = properties.getProperty(PfxPassword);
+            if (!tmp.isEmpty())  {
+                setPfxPassword(tmp);
+            }
+
+            tmp = properties.getProperty(Ca);
+            if (!tmp.isEmpty())  {
+                setCa(tmp);
+            }
+
+            tmp = properties.getProperty(CaPassword);
+            if (!tmp.isEmpty())  {
+                setCaPassword(tmp);
+            }
+        }
+
+        //[2]
         //running part
         clientId = getClientIdValue().toString();
 
@@ -147,5 +187,54 @@ public class Configs {
 
     public static String getStartId() {
         return clientId;
+    }
+
+    private static boolean isSsl() {
+        return ssl;
+    }
+
+    private static void setSsl(boolean ssl) {
+        Configs.ssl = ssl;
+    }
+
+    public static String getPfx() {
+        return pfx;
+    }
+
+    private static void setPfx(String pfx) {
+        Configs.pfx = pfx;
+    }
+
+    public static String getPfxPassword() {
+        return pfxPassword;
+    }
+
+    private static void setPfxPassword(String pfxPassword) {
+        Configs.pfxPassword = pfxPassword;
+    }
+
+    public static String getCa() {
+        return ca;
+    }
+
+    private static void setCa(String ca) {
+        Configs.ca = ca;
+    }
+
+    public static String getCaPassword() {
+        return caPassword;
+    }
+
+    private static void setCaPassword(String caPassword) {
+        Configs.caPassword = caPassword;
+    }
+
+    public static boolean isSslEnabled() {
+        if (isSsl())  {
+            return !pfx.isEmpty() && !pfxPassword.isEmpty()
+                    && !ca.isEmpty() && !caPassword.isEmpty();
+        }
+
+        return false;
     }
 }

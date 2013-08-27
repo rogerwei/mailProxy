@@ -4,15 +4,14 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
+import org.roger.study.ExClient.test.Report;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-import static org.roger.study.ExClient.Protocol.WBXmlCommands.getStatus;
-import static org.roger.study.ExClient.Protocol.WBXmlCommands.getValue;
-import static org.roger.study.ExClient.configuration.Configs.getRunTimes;
 import static org.roger.study.ExClient.configuration.RunTime.setPolicyKey;
 import static org.roger.study.ExClient.controller.HandleChannel.getUser;
+import static org.roger.study.ExClient.controller.TestCounter.setRes;
+import static org.roger.study.ExClient.controller.TestCounter.setSentOk;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,7 +44,12 @@ public class ParaResponse {
             //page and first commands
             ByteBuffer byteBuffer = response.getContent().toByteBuffer();
             return getDataAndNext(byteBuffer);
+        }else if (length == 0)  {
+            setSentOk(channel.getId());
         }
+
+        setRes(channel.getId());
+
         return BuildRequest.Type.None;
     }
 
@@ -54,12 +58,24 @@ public class ParaResponse {
 
         ParaCmd para = new ParaCmd(bytes);
         if (para.isProvision())  {
-            if (para.Status(ParaCmd.StatusType.DeviceInformation) == 1)  {
-                paraPolicyKey(para);
+            int status1 = para.Status(ParaCmd.StatusType.DeviceInformation);
+            int status2 = para.Status(ParaCmd.StatusType.Policy);
+            if (status1 == 1)  {
+                Report.logon(getUser(channel), true);
+                boolean res = paraPolicyKey(para);
+                Report.paraPolicyKey(getUser(channel), res);
                 return BuildRequest.Type.AckProvision;
-            }else if (para.Status(ParaCmd.StatusType.Policy) == 1)  {
-                paraPolicyKey(para);
+            }else if (status2 == 1)  {
+                Report.ackPolicyKey(getUser(channel), true);
+                boolean res = paraPolicyKey(para);
+                Report.paraPolicyKey(getUser(channel), res);
                 return BuildRequest.Type.SendMail;
+            }else {
+                if (status1 > 0)  {
+                    Report.logon(getUser(channel), false);
+                }else if (status2 > 0) {
+                    Report.ackPolicyKey(getUser(channel), false);
+                }
             }
         }
 
@@ -67,13 +83,16 @@ public class ParaResponse {
     }
 
 
-    private void paraPolicyKey(ParaCmd para) {
+    private boolean paraPolicyKey(ParaCmd para) {
         String user = getUser(channel);
         if (user.isEmpty())
-            return;
+            return false;
 
         Long key = para.policyKey();
-        if (key > 0)
+        if (key > 0)  {
             setPolicyKey(user, Long.valueOf((key)));
+            return true;
+        }
+        return false;
     }
 }

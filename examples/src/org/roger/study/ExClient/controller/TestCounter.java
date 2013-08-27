@@ -3,6 +3,8 @@ package org.roger.study.ExClient.controller;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 import org.roger.study.ExClient.configuration.Configs;
 
+import static org.roger.study.ExClient.test.Report.report;
+
 /**
  * Created with IntelliJ IDEA.
  * User: next
@@ -12,7 +14,7 @@ import org.roger.study.ExClient.configuration.Configs;
  */
 public class TestCounter {
     private static ConcurrentHashMap<Integer, Integer> counter = new ConcurrentHashMap<Integer, Integer>();  //Channel Id, test times
-    private static Integer sent = 0x0;
+    private static Integer sent = 0x0, sentOk = 0x0, res=0x0;
 
     public static synchronized boolean  testOne(Integer key)  {
         if (!counter.containsKey(key))  {
@@ -32,15 +34,41 @@ public class TestCounter {
     }
 
     public static boolean TestOver()  {
-        for (Integer value:counter.values())  {
-            if (value < Configs.getRunTimes())
-                return false;
-        }
-
-        return true;
+        Integer b = Configs.getRunTimes() * counter.size();
+        return res == (Configs.getRunTimes() * counter.size());
     }
 
     public static void clearTestCounter()  {
         counter.clear();
+        setSent(0);
+        setSentOk(0);
+    }
+
+
+    public static Integer getSent() {
+        return sent;
+    }
+
+    private static void setSent(Integer sent) {
+        TestCounter.sent = sent;
+    }
+
+    public static Integer getSentOk() {
+        return sentOk;
+    }
+
+    public static void setSentOk(Integer channelId) {
+        synchronized(sentOk)  {
+            if (counter.containsKey(channelId) && counter.get(channelId) > 0)
+                sentOk++;
+        }
+    }
+
+    public static synchronized void setRes(Integer channelId) {
+        if (counter.containsKey(channelId) && counter.get(channelId) > 0)
+            res++;
+
+        if (TestOver())
+            report();
     }
 }

@@ -4,10 +4,12 @@ import org.jboss.netty.channel.*;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.CharsetUtil;
 import org.roger.study.ExClient.Protocol.ProxyRequest;
 import org.roger.study.ExClient.configuration.Configs;
 import org.roger.study.ExClient.controller.HandleResponse;
+import org.roger.study.ExClient.test.Report;
 
 import static org.roger.study.ExClient.controller.HandleChannel.BuildPeer;
 
@@ -21,11 +23,25 @@ import static org.roger.study.ExClient.controller.HandleChannel.BuildPeer;
 public class ClientHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        System.out.println("connected-->[" + Configs.getHost() + ":" + Configs.getPort() +"]");
+        Report.connectServer(true);
 
-        Channel channel = e.getChannel();
-        BuildPeer(channel);
-        System.out.println(channel.getId());
+        if (Configs.isSslEnabled())   {
+            SslHandler sslHandler = ctx.getPipeline().get(SslHandler.class);
+            ChannelFuture f= sslHandler.handshake();
+
+            f.addListener(new ChannelFutureListener() {
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if (future.isSuccess())
+                    {
+                        BuildPeer(future.getChannel());
+
+                    } else {
+                        future.getChannel().close();
+                    }
+                }
+            });
+        }else
+            BuildPeer(e.getChannel());
     }
 
     @Override

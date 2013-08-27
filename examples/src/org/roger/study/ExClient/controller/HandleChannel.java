@@ -5,6 +5,7 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 import org.roger.study.ExClient.configuration.Configs;
+import org.roger.study.ExClient.test.Report;
 
 import java.util.Set;
 
@@ -35,6 +36,7 @@ public class HandleChannel {
         channels.add(channel);
         map.put(channel.getId(), user);
 
+        Report.logon(user);
         SendRequest.Options(channel);
 
         return user;

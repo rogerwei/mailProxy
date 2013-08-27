@@ -4,8 +4,10 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.roger.study.ExClient.Protocol.BuildRequest;
+import org.roger.study.ExClient.test.Report;
 
 import static org.roger.study.ExClient.controller.HandleChannel.activeChannels;
+import static org.roger.study.ExClient.controller.HandleChannel.getUser;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,6 +26,7 @@ public class SendRequest {
     }
 
     public static void SendMail(Channel channel) {
+        Report.sendmail(getUser(channel));
         while ( true) {
             if (TestCounter.testOne(channel.getId()))
                 buildAndSend(channel, BuildRequest.Type.SendMail);
@@ -45,6 +48,7 @@ public class SendRequest {
     }
 
     public static void AckProvision(Channel channel) {
+        Report.ackPolicyKey(getUser(channel));
         buildAndSend(channel, BuildRequest.Type.AckProvision);
     }
 }

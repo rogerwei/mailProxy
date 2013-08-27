@@ -4,6 +4,11 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.handler.codec.http.HttpClientCodec;
 import org.jboss.netty.handler.codec.http.HttpContentDecompressor;
+import org.jboss.netty.handler.ssl.SslHandler;
+import org.roger.study.ExClient.Security.SSL.SecureSslContextFactory;
+import org.roger.study.ExClient.configuration.Configs;
+
+import javax.net.ssl.SSLEngine;
 
 import static org.jboss.netty.channel.Channels.pipeline;
 
@@ -19,6 +24,12 @@ public class PipelineFactory implements ChannelPipelineFactory {
     public ChannelPipeline getPipeline() throws Exception {
         ChannelPipeline pipeline = pipeline();
 
+        if (Configs.isSslEnabled()) {
+            SecureSslContextFactory ss =  new    SecureSslContextFactory();
+            SSLEngine engine = ss.getClientContext().createSSLEngine();
+            engine.setUseClientMode(true);
+            pipeline.addLast("ssl", new SslHandler(engine));
+        }
 
         pipeline.addLast("codec", new HttpClientCodec());
         pipeline.addLast("inflater", new HttpContentDecompressor());

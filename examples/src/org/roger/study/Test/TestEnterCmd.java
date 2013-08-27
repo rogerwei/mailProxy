@@ -1,32 +1,18 @@
-package org.roger.study.ExClient;
+package org.roger.study.Test;
 
-import org.roger.study.ExClient.configuration.Configs;
-import org.roger.study.ExClient.test.Report;
-import org.roger.study.ExClient.transport.ClientProxy;
 
 import java.io.IOException;
-
-import static org.roger.study.ExClient.Util.Number.isNumeric;
-import static org.roger.study.ExClient.controller.UserInterface.sendMail;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
  * User: next
- * Date: 13-8-20
- * Time: 下午6:10
+ * Date: 13-8-26
+ * Time: 下午3:58
  * To change this template use File | Settings | File Templates.
  */
-public class ExClient {
-
+public class TestEnterCmd {
     public static void main(String[] args)  {
-        Report.TestStart();
-        //init config
-        Configs.init();
-        //start console
-        ClientProxy proxy = new ClientProxy(Configs.getUsers().size());
-        proxy.start();
-
-        //Human–Machine Interaction
         interaction();
     }
 
@@ -34,25 +20,20 @@ public class ExClient {
         byte[] data = new byte[100];
         while (true)  {
             try{
-                System.in.read(data);
+                int len = System.in.read(data);
 
                 int res = paraCmd(new String(data));
-                if (res == -1)  {
-                    showUsage();
-                }else  {
-                    sendMail(res);
-                }
+                System.out.println(res);
             }
             catch(IOException e){
-                System.out.println("Could not get data from the console!");
+                System.out.println("Could not get data from user!!!!");
             }
         }
     }
 
-    private static void showUsage() {
-        System.out.println("Command Line Usage:");
-        System.out.println("        sendmail times");
-        System.out.println("The argument of times must large then zero.");
+    public static boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
     }
 
     private static int paraCmd(String cmdline) {
