@@ -34,23 +34,19 @@ public class TestCounter {
     }
 
     public static boolean TestOver()  {
-        Integer b = Configs.getRunTimes() * counter.size();
         return res == (Configs.getRunTimes() * counter.size());
     }
 
     public static void clearTestCounter()  {
         counter.clear();
-        setSent(0);
-        setSentOk(0);
+        sent = 0x0;
+        sentOk = 0x0;
+        res=0x0;
     }
 
 
     public static Integer getSent() {
         return sent;
-    }
-
-    private static void setSent(Integer sent) {
-        TestCounter.sent = sent;
     }
 
     public static Integer getSentOk() {

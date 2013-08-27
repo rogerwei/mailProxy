@@ -64,4 +64,8 @@ public class Report {
     public static void sendmail(String user)  {
         System.out.println("  " + user + "开始进行邮件发送测试");
     }
+
+    public static void getError(String user, String err) {
+        System.out.println("  " + user + "收到失败响应:" + err);
+    }
 }

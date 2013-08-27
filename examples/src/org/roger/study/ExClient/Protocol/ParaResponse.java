@@ -32,8 +32,10 @@ public class ParaResponse {
     }
 
     public BuildRequest.Type next()  {
-        if (!response.getStatus().equals(HttpResponseStatus.OK))
+        if (!response.getStatus().equals(HttpResponseStatus.OK))  {
+            Report.getError(getUser(channel) ,response.getStatus().toString());
             return BuildRequest.Type.None;
+        }
 
         if (response.containsHeader(serverProtocolVersionHeader)
                 && response.getHeader(HttpHeaders.Names.CONTENT_LENGTH).equals("0"))  //It's Options Response
